@@ -16,6 +16,8 @@ const concat = require('gulp-concat');
 const del = require('del');
 const pngquant = require('imagemin-pngquant');
 const postcss = require('gulp-postcss');
+const purgecss = require('@fullhuman/postcss-purgecss');
+const purgecssWordpress = require('purgecss-with-wordpress');
 const cssImport = require('postcss-import');
 const postcssPresetEnv = require('postcss-preset-env');
 const postcssCustomMedia = require('postcss-custom-media');
@@ -185,6 +187,12 @@ function css() {
           features: {
             'nesting-rules': true
           }
+        }),
+        purgecss({
+          content: [`${path.src}/*.html`, `${path.src}/*.php`],
+          defaultExtractor: content => content.match(/[\w-/:]+(?<!:)/g) || [],
+          whitelist: purgecssWordpress.whitelist,
+          whitelistPatterns: purgecssWordpress.whitelistPatterns
         })
       ])
     )
